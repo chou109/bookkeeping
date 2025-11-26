@@ -1,17 +1,51 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
+  <component name="AutoImportSettings">
+    <option name="autoReloadType" value="SELECTIVE" />
+  </component>
   <component name="ChangeListManager">
-    <list default="true" id="226e864f-4f88-454d-ac8c-3acbe76d8461" name="更改" comment="" />
+    <list default="true" id="226e864f-4f88-454d-ac8c-3acbe76d8461" name="更改" comment="11.26代码功能重构">
+      <change afterPath="$PROJECT_DIR$/.idea/uiDesigner.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/com/smartconsumption/dao/BudgetDAO.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/com/smartconsumption/dao/ExpenseDAO.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/com/smartconsumption/dao/IncomeDAO.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/com/smartconsumption/dao/UserDAO.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/com/smartconsumption/entity/Budget.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/com/smartconsumption/entity/Expense.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/com/smartconsumption/entity/Income.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/com/smartconsumption/entity/User.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/com/smartconsumption/service/BudgetService.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/com/smartconsumption/service/ExpenseService.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/com/smartconsumption/service/IncomeService.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/com/smartconsumption/service/UserService.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/com/smartconsumption/util/DatabaseConnection.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/com/smartconsumption/util/InputUtil.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/project30.iml" beforeDir="false" afterPath="$PROJECT_DIR$/project30.iml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Main.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/Main.java" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
     <option name="LAST_RESOLUTION" value="IGNORE" />
   </component>
+  <component name="CodeInsightWorkspaceSettings">
+    <option name="optimizeImportsOnTheFly" value="true" />
+  </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="Class" />
+      </list>
+    </option>
+  </component>
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
   <component name="ProjectId" id="35zqQU2Q9wiMPjFeAJL6GkA41ea" />
-  <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
+  <component name="ProjectLevelVcsManager" settingsEditedManually="true">
+    <ConfirmationsSetting value="2" id="Add" />
+  </component>
   <component name="ProjectViewState">
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
@@ -20,8 +54,18 @@
   "keyToString": {
     "RunOnceActivity.OpenProjectViewOnStart": "true",
     "RunOnceActivity.ShowReadmeOnStart": "true",
+    "SHARE_PROJECT_CONFIGURATION_FILES": "true",
     "WebServerToolWindowFactoryState": "false",
     "git-widget-placeholder": "master",
+    "last_opened_file_path": "D:/周超/Documents/Project/project30/lib/mysql-connector-j-9.5.0.jar",
+    "node.js.detected.package.eslint": "true",
+    "node.js.detected.package.tslint": "true",
+    "node.js.selected.package.eslint": "(autodetect)",
+    "node.js.selected.package.tslint": "(autodetect)",
+    "project.structure.last.edited": "库",
+    "project.structure.proportion": "0.0",
+    "project.structure.side.proportion": "0.0",
+    "settings.editor.selected.configurable": "preferences.pluginManager",
     "vue.rearranger.settings.migration": "true"
   }
 }]]></component>
@@ -33,8 +77,25 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1764123232124</updated>
-      <workItem from="1764123233124" duration="1000" />
+      <workItem from="1764123233124" duration="2317000" />
+      <workItem from="1764125577405" duration="32000" />
+      <workItem from="1764125616180" duration="2117000" />
     </task>
+    <task id="LOCAL-00001" summary="11.26代码功能重构">
+      <created>1764123442634</created>
+      <option name="number" value="00001" />
+      <option name="presentableId" value="LOCAL-00001" />
+      <option name="project" value="LOCAL" />
+      <updated>1764123442634</updated>
+    </task>
+    <option name="localTasksCounter" value="2" />
     <servers />
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="3" />
+  </component>
+  <component name="VcsManagerConfiguration">
+    <MESSAGE value="11.26代码功能重构" />
+    <option name="LAST_COMMIT_MESSAGE" value="11.26代码功能重构" />
   </component>
 </project>
