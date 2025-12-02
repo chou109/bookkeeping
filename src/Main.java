@@ -211,9 +211,12 @@ public class Main {
     private static void addIncome() {
         System.out.println("\n=== 添加收入记录 ===");
 
-        BigDecimal amount = InputUtil.getBigDecimal("请输入收入金额: ");
+        BigDecimal amount = InputUtil.getValidAmount("请输入收入金额(整数最多8位，小数最多2位): ", 8, 2);
         String source = InputUtil.getString("请输入收入来源: ");
-        LocalDate incomeDate = InputUtil.getDate("请输入收入日期");
+
+        // 使用增强的日期验证
+        LocalDate incomeDate = InputUtil.getDate("请输入收入日: ");
+
         String description = InputUtil.getString("请输入收入描述 (可选): ");
 
         Income income = new Income(currentUser.getUserId(), amount, source, incomeDate, description);
@@ -242,8 +245,8 @@ public class Main {
                 incomes = incomeService.getIncomesByUserId(currentUser.getUserId());
                 break;
             case 2:
-                LocalDate startDate = InputUtil.getDate("请输入开始日期");
-                LocalDate endDate = InputUtil.getDate("请输入结束日期");
+                LocalDate startDate = InputUtil.getDate("请输入开始日期: ");
+                LocalDate endDate = InputUtil.getDate("请输入结束日期: ");
                 incomes = incomeService.getIncomesByDateRange(currentUser.getUserId(), startDate, endDate);
                 break;
             default:
@@ -320,9 +323,11 @@ public class Main {
     private static void addExpense() {
         System.out.println("\n=== 添加支出记录 ===");
 
-        BigDecimal amount = InputUtil.getBigDecimal("请输入支出金额: ");
+        // 整数最多8位，小数最多2位
+        BigDecimal amount = InputUtil.getValidAmount("请输入支出金额(整数最多8位，小数最多2位): ", 8, 2);
+
         String category = InputUtil.getString("请输入支出类别: ");
-        LocalDate expenseDate = InputUtil.getDate("请输入支出日期");
+        LocalDate expenseDate = InputUtil.getDate("请输入支出日期: ");
         String description = InputUtil.getString("请输入支出描述 (可选): ");
 
         Expense expense = new Expense(currentUser.getUserId(), amount, category, expenseDate, description);
@@ -351,8 +356,8 @@ public class Main {
                 expenses = expenseService.getExpensesByUserId(currentUser.getUserId());
                 break;
             case 2:
-                LocalDate startDate = InputUtil.getDate("请输入开始日期");
-                LocalDate endDate = InputUtil.getDate("请输入结束日期");
+                LocalDate startDate = InputUtil.getDate("请输入开始日期: ");
+                LocalDate endDate = InputUtil.getDate("请输入结束日期: ");
                 expenses = expenseService.getExpensesByDateRange(currentUser.getUserId(), startDate, endDate);
                 break;
             default:
@@ -434,8 +439,10 @@ public class Main {
         System.out.println("\n=== 添加预算 ===");
 
         String category = InputUtil.getString("请输入预算类别: ");
-        BigDecimal amount = InputUtil.getBigDecimal("请输入预算金额: ");
-        String monthYear = InputUtil.getMonthYear("请输入预算月份");
+        BigDecimal amount = InputUtil.getValidAmount("请输入预算金额(整数最多8位，小数最多2位): ", 8, 2);
+
+        // 使用增强的月份验证
+        String monthYear = InputUtil.getMonthYear("请输入预算月份: ");
 
         Budget budget = new Budget(currentUser.getUserId(), category, amount, monthYear);
 
@@ -450,7 +457,7 @@ public class Main {
     private static void viewBudgets() {
         System.out.println("\n=== 查看预算 ===");
 
-        String monthYear = InputUtil.getMonthYear("请输入要查看的月份");
+        String monthYear = InputUtil.getMonthYear("请输入要查看的月份: ");
 
         List<Budget> budgets = budgetService.getBudgetsByUserIdAndMonth(currentUser.getUserId(), monthYear);
 
@@ -469,7 +476,7 @@ public class Main {
     private static void updateBudget() {
         System.out.println("\n=== 修改预算 ===");
 
-        String monthYear = InputUtil.getMonthYear("请输入要修改的预算月份");
+        String monthYear = InputUtil.getMonthYear("请输入要修改的预算月份: ");
 
         List<Budget> budgets = budgetService.getBudgetsByUserIdAndMonth(currentUser.getUserId(), monthYear);
 
@@ -485,7 +492,9 @@ public class Main {
         }
 
         int budgetId = InputUtil.getInt("请输入要修改的预算ID: ");
-        BigDecimal newAmount = InputUtil.getBigDecimal("请输入新的预算金额: ");
+
+        // 整数最多8位，小数最多2位
+        BigDecimal newAmount = InputUtil.getValidAmount("请输入新的预算金额(整数最多8位，小数最多2位): ", 8, 2);
 
         // 找到要修改的预算
         Budget budgetToUpdate = null;
@@ -514,7 +523,7 @@ public class Main {
     private static void deleteBudget() {
         System.out.println("\n=== 删除预算 ===");
 
-        String monthYear = InputUtil.getMonthYear("请输入要删除的预算月份");
+        String monthYear = InputUtil.getMonthYear("请输入要删除的预算月份: ");
 
         List<Budget> budgets = budgetService.getBudgetsByUserIdAndMonth(currentUser.getUserId(), monthYear);
 
@@ -581,7 +590,7 @@ public class Main {
     private static void showExpenseByCategory() {
         System.out.println("\n=== 支出类别统计 ===");
 
-        String monthYear = InputUtil.getMonthYear("请输入要统计的月份");
+        String monthYear = InputUtil.getMonthYear("请输入要统计的月份: ");
 
         List<Object[]> categoryExpenses = expenseService.getExpenseByCategory(currentUser.getUserId(), monthYear);
 
