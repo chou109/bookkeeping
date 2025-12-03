@@ -38,4 +38,9 @@ public class ExpenseService {
     public boolean deleteExpense(int expenseId) {
         return expenseDAO.deleteExpense(expenseId);
     }
+
+    // 新增：获取用户某月某类别的支出总额
+    public BigDecimal getMonthlyExpenseByCategory(int userId, String category, String monthYear) {
+        return expenseDAO.getMonthlyExpenseByCategory(userId, category, monthYear);
+    }
 }

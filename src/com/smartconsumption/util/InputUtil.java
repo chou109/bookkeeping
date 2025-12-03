@@ -10,22 +10,67 @@ import java.util.Scanner;
 public class InputUtil {
     private static Scanner scanner = new Scanner(System.in);
 
-    // 获取字符串输入
-    public static String getString(String prompt) {
-        System.out.print(prompt);
-        return scanner.nextLine().trim();
+    // 获取字符串输入（带长度限制）
+    public static String getString(String prompt, int maxLength) {
+        while (true) {
+            System.out.print(prompt);
+            String input = scanner.nextLine().trim();
+
+            if (input.isEmpty()) {
+                System.out.println("输入不能为空！");
+                continue;
+            }
+
+            if (input.length() > maxLength) {
+                System.out.println("输入过长！最多允许 " + maxLength + " 个字符。");
+                continue;
+            }
+
+            return input;
+        }
     }
 
-    // 获取整数输入
-    public static int getInt(String prompt) {
+    // 获取字符串输入（可选）
+    public static String getStringOptional(String prompt, int maxLength) {
+        System.out.print(prompt);
+        String input = scanner.nextLine().trim();
+
+        if (!input.isEmpty() && input.length() > maxLength) {
+            System.out.println("输入过长！最多允许 " + maxLength + " 个字符。");
+            // 递归调用直到输入正确
+            return getStringOptional(prompt, maxLength);
+        }
+
+        return input;
+    }
+
+    // 获取整数输入（带范围验证）
+    public static int getInt(String prompt, int min, int max) {
         while (true) {
             try {
                 System.out.print(prompt);
-                return Integer.parseInt(scanner.nextLine().trim());
+                int value = Integer.parseInt(scanner.nextLine().trim());
+
+                if (value < min) {
+                    System.out.println("输入值不能小于 " + min + "！");
+                    continue;
+                }
+
+                if (value > max) {
+                    System.out.println("输入值不能大于 " + max + "！");
+                    continue;
+                }
+
+                return value;
             } catch (NumberFormatException e) {
                 System.out.println("请输入有效的整数！");
             }
         }
+    }
+
+    // 获取整数输入（基础版本）
+    public static int getInt(String prompt) {
+        return getInt(prompt, Integer.MIN_VALUE, Integer.MAX_VALUE);
     }
 
     // 获取BigDecimal输入（基础版本）
@@ -447,52 +492,234 @@ public class InputUtil {
             }
         }
     }
+    // 获取日期（只能选择当前日期及之前的日期）
+    public static LocalDate getPastOrCurrentDate(String prompt) {
+        LocalDate today = LocalDate.now();
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
 
-    // 月份天数查询工具方法
-    public static void printMonthDaysInfo(int year, int month) {
-        if (month < 1 || month > 12) {
-            System.out.println("无效的月份！");
-            return;
-        }
-
-        int maxDays = getMaxDaysInMonth(year, month);
-        String monthName = getMonthName(month);
-        boolean isLeap = isLeapYear(year);
-
-        System.out.println(year + "年" + monthName + "（" + month + "月）有" + maxDays + "天");
-        if (month == 2) {
-            System.out.println("该年" + (isLeap ? "是" : "不是") + "闰年");
-        }
-    }
-
-    // 获取月份名称
-    private static String getMonthName(int month) {
-        switch (month) {
-            case 1: return "一月";
-            case 2: return "二月";
-            case 3: return "三月";
-            case 4: return "四月";
-            case 5: return "五月";
-            case 6: return "六月";
-            case 7: return "七月";
-            case 8: return "八月";
-            case 9: return "九月";
-            case 10: return "十月";
-            case 11: return "十一月";
-            case 12: return "十二月";
-            default: return "未知月份";
-        }
-    }
-
-    // 获取选择输入（用于菜单选择等）
-    public static int getChoice(String prompt, int min, int max) {
         while (true) {
-            int choice = getInt(prompt);
-            if (choice >= min && choice <= max) {
-                return choice;
-            } else {
-                System.out.println("请选择 " + min + " 到 " + max + " 之间的数字！");
+            try {
+                System.out.print(prompt + " (格式: yyyy-MM-dd，不能晚于今天 " + today + "): ");
+                String dateStr = scanner.nextLine().trim();
+
+                LocalDate date = LocalDate.parse(dateStr, formatter);
+
+                // 验证年份不得早于1900年
+                if (date.getYear() < 1900) {
+                    System.out.println("年份不得早于1900年！");
+                    continue;
+                }
+
+                // 验证日期是否有效
+                if (!isValidDate(date.getYear(), date.getMonthValue(), date.getDayOfMonth())) {
+                    System.out.println(getDateValidationMessage(date.getYear(), date.getMonthValue(), date.getDayOfMonth()));
+                    continue;
+                }
+
+                // 验证日期不能晚于当前日期
+                if (date.isAfter(today)) {
+                    System.out.println("日期不能晚于今天！");
+                    continue;
+                }
+
+                return date;
+            } catch (DateTimeParseException e) {
+                System.out.println("日期格式错误，请使用 yyyy-MM-dd 格式！");
             }
+        }
+    }
+
+    // 获取性别输入（只允许"男"或"女"）
+    public static String getGender(String prompt) {
+        while (true) {
+            System.out.print(prompt);
+            String gender = scanner.nextLine().trim();
+
+            if (gender.equals("男") || gender.equals("女")) {
+                return gender;
+            } else {
+                System.out.println("性别只能输入'男'或'女'！");
+            }
+        }
+    }
+
+    // 获取学号输入（只允许字母、数字和常见符号，长度限制）
+    public static String getStudentId(String prompt) {
+        while (true) {
+            System.out.print(prompt);
+            String studentId = scanner.nextLine().trim();
+
+            if (studentId.isEmpty()) {
+                System.out.println("学号不能为空！");
+                continue;
+            }
+
+            // 长度限制（根据数据库VARCHAR(20)）
+            if (studentId.length() > 20) {
+                System.out.println("学号过长！最多允许20个字符。");
+                continue;
+            }
+
+            // 检查是否只包含允许的字符（字母、数字、下划线、短横线）
+            if (!studentId.matches("^[a-zA-Z0-9_-]+$")) {
+                System.out.println("学号只能包含字母、数字、下划线(_)和短横线(-)！");
+                continue;
+            }
+
+            return studentId;
+        }
+    }
+
+    // 获取电话号码输入
+    public static String getPhone(String prompt) {
+        while (true) {
+            System.out.print(prompt);
+            String phone = scanner.nextLine().trim();
+
+            if (phone.isEmpty()) {
+                // 允许为空
+                return phone;
+            }
+
+            // 长度限制（根据数据库VARCHAR(15)）
+            if (phone.length() > 15) {
+                System.out.println("电话号码过长！最多允许15个字符。");
+                continue;
+            }
+
+            // 检查是否只包含数字、空格、括号、短横线等常见电话字符
+            if (!phone.matches("^[0-9\\s\\+\\-\\(\\)]+$")) {
+                System.out.println("电话号码只能包含数字、空格、+、-、(、)等字符！");
+                continue;
+            }
+
+            // 移除所有非数字字符，检查纯数字长度
+            String digitsOnly = phone.replaceAll("[^0-9]", "");
+            if (digitsOnly.length() < 7) {
+                System.out.println("电话号码太短！至少需要7位数字。");
+                continue;
+            }
+
+            if (digitsOnly.length() > 15) {
+                System.out.println("电话号码太长！最多15位数字。");
+                continue;
+            }
+
+            return phone;
+        }
+    }
+
+    // 获取邮箱输入
+    public static String getEmail(String prompt) {
+        while (true) {
+            System.out.print(prompt);
+            String email = scanner.nextLine().trim();
+
+            if (email.isEmpty()) {
+                // 允许为空
+                return email;
+            }
+
+            // 长度限制（根据数据库VARCHAR(100)）
+            if (email.length() > 100) {
+                System.out.println("邮箱地址过长！最多允许100个字符。");
+                continue;
+            }
+
+            // 简单的邮箱格式验证
+            if (!email.matches("^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}$")) {
+                System.out.println("邮箱格式不正确！请使用正确的邮箱格式，如：example@domain.com");
+                continue;
+            }
+
+            return email;
+        }
+    }
+
+    // 获取用户名输入
+    public static String getUsername(String prompt) {
+        while (true) {
+            System.out.print(prompt);
+            String username = scanner.nextLine().trim();
+
+            if (username.isEmpty()) {
+                System.out.println("用户名不能为空！");
+                continue;
+            }
+
+            // 长度限制（根据数据库VARCHAR(50)）
+            if (username.length() > 50) {
+                System.out.println("用户名过长！最多允许50个字符。");
+                continue;
+            }
+
+            // 检查是否只包含允许的字符（字母、数字、下划线）
+            if (!username.matches("^[a-zA-Z0-9_]+$")) {
+                System.out.println("用户名只能包含字母、数字和下划线(_)！");
+                continue;
+            }
+
+            // 检查用户名长度
+            if (username.length() < 3) {
+                System.out.println("用户名太短！至少需要3个字符。");
+                continue;
+            }
+
+            return username;
+        }
+    }
+
+    // 获取密码输入
+    public static String getPassword(String prompt) {
+        while (true) {
+            System.out.print(prompt);
+            String password = scanner.nextLine().trim();
+
+            if (password.isEmpty()) {
+                System.out.println("密码不能为空！");
+                continue;
+            }
+
+            // 长度限制（根据数据库VARCHAR(100)）
+            if (password.length() > 100) {
+                System.out.println("密码过长！最多允许100个字符。");
+                continue;
+            }
+
+            // 检查密码长度
+            if (password.length() < 6) {
+                System.out.println("密码太短！至少需要6个字符。");
+                continue;
+            }
+
+            return password;
+        }
+    }
+
+    // 获取姓名输入
+    public static String getName(String prompt) {
+        while (true) {
+            System.out.print(prompt);
+            String name = scanner.nextLine().trim();
+
+            if (name.isEmpty()) {
+                System.out.println("姓名不能为空！");
+                continue;
+            }
+
+            // 长度限制（根据数据库VARCHAR(50)）
+            if (name.length() > 50) {
+                System.out.println("姓名过长！最多允许50个字符。");
+                continue;
+            }
+
+            // 检查姓名是否只包含中文字母、空格和点号
+            if (!name.matches("^[\\u4e00-\\u9fa5a-zA-Z\\s·.]+$")) {
+                System.out.println("姓名只能包含中文、英文字母、空格和点号！");
+                continue;
+            }
+
+            return name;
         }
     }
 
@@ -508,58 +735,6 @@ public class InputUtil {
                 return false;
             } else {
                 System.out.println("请输入 y/n 或 是/否！");
-            }
-        }
-    }
-
-    // 获取性别输入
-    public static String getGender(String prompt) {
-        while (true) {
-            System.out.print(prompt + " (男/女): ");
-            String gender = scanner.nextLine().trim();
-
-            if (gender.equals("男") || gender.equals("女")) {
-                return gender;
-            } else {
-                System.out.println("请输入 男 或 女！");
-            }
-        }
-    }
-
-    // 获取邮箱输入（简单验证）
-    public static String getEmail(String prompt) {
-        while (true) {
-            System.out.print(prompt);
-            String email = scanner.nextLine().trim();
-
-            if (email.isEmpty()) {
-                return email; // 允许为空
-            }
-
-            // 简单的邮箱格式验证
-            if (email.matches("^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+$")) {
-                return email;
-            } else {
-                System.out.println("邮箱格式不正确，请重新输入！");
-            }
-        }
-    }
-
-    // 获取手机号输入（简单验证）
-    public static String getPhone(String prompt) {
-        while (true) {
-            System.out.print(prompt);
-            String phone = scanner.nextLine().trim();
-
-            if (phone.isEmpty()) {
-                return phone; // 允许为空
-            }
-
-            // 简单的手机号格式验证（11位数字）
-            if (phone.matches("\\d{11}")) {
-                return phone;
-            } else {
-                System.out.println("手机号必须是11位数字！");
             }
         }
     }

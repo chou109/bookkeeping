@@ -3,6 +3,7 @@ import com.smartconsumption.service.*;
 import com.smartconsumption.util.InputUtil;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Scanner;
@@ -98,14 +99,15 @@ public class Main {
     private static void register() {
         System.out.println("\n=== 用户注册 ===");
 
-        String username = InputUtil.getString("请输入用户名: ");
-        String password = InputUtil.getString("请输入密码: ");
-        String name = InputUtil.getString("请输入姓名: ");
-        String studentId = InputUtil.getString("请输入学号: ");
-        String gender = InputUtil.getString("请输入性别 (男/女): ");
-        int age = InputUtil.getInt("请输入年龄: ");
-        String phone = InputUtil.getString("请输入电话: ");
-        String email = InputUtil.getString("请输入邮箱: ");
+        // 使用新的验证方法
+        String username = InputUtil.getUsername("请输入用户名: ");
+        String password = InputUtil.getPassword("请输入密码: ");
+        String name = InputUtil.getName("请输入姓名: ");
+        String studentId = InputUtil.getStudentId("请输入学号: ");
+        String gender = InputUtil.getGender("请输入性别 (男/女): ");
+        int age = InputUtil.getInt("请输入年龄: ", 1, 150);
+        String phone = InputUtil.getPhone("请输入电话: ");
+        String email = InputUtil.getEmail("请输入邮箱: ");
 
         User user = new User(username, password, name, studentId, gender, age, phone, email);
 
@@ -120,8 +122,9 @@ public class Main {
     private static void login() {
         System.out.println("\n=== 用户登录 ===");
 
-        String username = InputUtil.getString("请输入用户名: ");
-        String password = InputUtil.getString("请输入密码: ");
+        // 修改：使用新的 getString 方法，需要指定最大长度
+        String username = InputUtil.getString("请输入用户名: ", 50);
+        String password = InputUtil.getString("请输入密码: ", 100);
 
         User user = userService.login(username, password);
 
@@ -160,19 +163,35 @@ public class Main {
     private static void updatePersonalInfo() {
         System.out.println("\n=== 修改个人信息 ===");
 
-        String name = InputUtil.getString("请输入新姓名 (" + currentUser.getName() + "): ");
-        String studentId = InputUtil.getString("请输入新学号 (" + currentUser.getStudentId() + "): ");
-        String gender = InputUtil.getString("请输入新性别 (男/女) (" + currentUser.getGender() + "): ");
-        int age = InputUtil.getInt("请输入新年龄 (" + currentUser.getAge() + "): ");
-        String phone = InputUtil.getString("请输入新电话 (" + currentUser.getPhone() + "): ");
-        String email = InputUtil.getString("请输入新邮箱 (" + currentUser.getEmail() + "): ");
+        // 修改：所有 getString 调用都需要指定最大长度
+        String name = InputUtil.getStringOptional("请输入新姓名 (" + currentUser.getName() + "): ", 50);
+        String studentId = InputUtil.getStringOptional("请输入新学号 (" + currentUser.getStudentId() + "): ", 20);
 
-        currentUser.setName(name);
-        currentUser.setStudentId(studentId);
+        // 使用专门的性别输入方法，而不是 getString
+        System.out.print("请输入新性别 (男/女) (" + currentUser.getGender() + "): ");
+        String genderInput = scanner.nextLine().trim();
+        String gender = genderInput.isEmpty() ? currentUser.getGender() : genderInput;
+
+        int age = InputUtil.getInt("请输入新年龄 (" + currentUser.getAge() + "): ");
+        String phone = InputUtil.getStringOptional("请输入新电话 (" + currentUser.getPhone() + "): ", 15);
+        String email = InputUtil.getStringOptional("请输入新邮箱 (" + currentUser.getEmail() + "): ", 100);
+
+        // 只更新用户输入了内容的字段
+        if (!name.isEmpty()) {
+            currentUser.setName(name);
+        }
+        if (!studentId.isEmpty()) {
+            currentUser.setStudentId(studentId);
+        }
+        // 性别可以直接更新，因为用户要么输入新值，要么保持原值
         currentUser.setGender(gender);
         currentUser.setAge(age);
-        currentUser.setPhone(phone);
-        currentUser.setEmail(email);
+        if (!phone.isEmpty()) {
+            currentUser.setPhone(phone);
+        }
+        if (!email.isEmpty()) {
+            currentUser.setEmail(email);
+        }
 
         if (userService.updateUser(currentUser)) {
             System.out.println("个人信息更新成功！");
@@ -212,12 +231,12 @@ public class Main {
         System.out.println("\n=== 添加收入记录 ===");
 
         BigDecimal amount = InputUtil.getValidAmount("请输入收入金额(整数最多8位，小数最多2位): ", 8, 2);
-        String source = InputUtil.getString("请输入收入来源: ");
+        String source = InputUtil.getString("请输入收入来源: ", 100);
 
-        // 使用增强的日期验证
-        LocalDate incomeDate = InputUtil.getDate("请输入收入日: ");
+        // 修改：使用新的日期验证方法，只能选择当前日期或之前的日期
+        LocalDate incomeDate = InputUtil.getPastOrCurrentDate("请输入收入日期");
 
-        String description = InputUtil.getString("请输入收入描述 (可选): ");
+        String description = InputUtil.getStringOptional("请输入收入描述 (可选): ", 500);
 
         Income income = new Income(currentUser.getUserId(), amount, source, incomeDate, description);
 
@@ -326,9 +345,16 @@ public class Main {
         // 整数最多8位，小数最多2位
         BigDecimal amount = InputUtil.getValidAmount("请输入支出金额(整数最多8位，小数最多2位): ", 8, 2);
 
-        String category = InputUtil.getString("请输入支出类别: ");
-        LocalDate expenseDate = InputUtil.getDate("请输入支出日期: ");
-        String description = InputUtil.getString("请输入支出描述 (可选): ");
+        String category = InputUtil.getString("请输入支出类别: ", 50);
+
+        // 使用新的日期验证方法，只能选择当前日期或之前的日期
+        LocalDate expenseDate = InputUtil.getPastOrCurrentDate("请输入支出日期");
+
+        // 检查预算
+        String monthYear = expenseDate.format(java.time.format.DateTimeFormatter.ofPattern("yyyy-MM"));
+        checkBudgetWarning(currentUser.getUserId(), category, amount, monthYear);
+
+        String description = InputUtil.getStringOptional("请输入支出描述 (可选): ", 500);
 
         Expense expense = new Expense(currentUser.getUserId(), amount, category, expenseDate, description);
 
@@ -336,6 +362,46 @@ public class Main {
             System.out.println("支出记录添加成功！");
         } else {
             System.out.println("支出记录添加失败！");
+        }
+    }
+
+    // 检查预算警告的辅助方法
+    private static void checkBudgetWarning(int userId, String category, BigDecimal newExpenseAmount, String monthYear) {
+        // 获取该类别预算
+        BigDecimal budgetAmount = budgetService.getBudgetByCategory(userId, category, monthYear);
+
+        if (budgetAmount != null) {
+            // 获取该类别已支出总额
+            BigDecimal currentExpense = expenseService.getMonthlyExpenseByCategory(userId, category, monthYear);
+
+            // 计算新的支出总额
+            BigDecimal newTotalExpense = currentExpense.add(newExpenseAmount);
+
+            // 检查是否超出预算
+            if (newTotalExpense.compareTo(budgetAmount) > 0) {
+                System.out.println("\n⚠️ 警告：本月'" + category + "'类别的预算为 " + budgetAmount);
+                System.out.println("   已支出: " + currentExpense);
+                System.out.println("   本次支出: " + newExpenseAmount);
+                System.out.println("   支出后总额: " + newTotalExpense + " (超出预算!)");
+                System.out.println("   建议调整支出计划或修改预算！");
+
+                // 确认是否继续
+                boolean continueExpense = InputUtil.getYesNo("是否继续添加此支出记录？");
+                if (!continueExpense) {
+                    throw new RuntimeException("用户取消支出操作");
+                }
+            } else if (newTotalExpense.compareTo(budgetAmount) == 0) {
+                System.out.println("\n⚠️ 注意：本月'" + category + "'类别的预算已用完！");
+                System.out.println("   预算: " + budgetAmount);
+                System.out.println("   本次支出后总额: " + newTotalExpense);
+            } else if (newTotalExpense.compareTo(budgetAmount.multiply(new BigDecimal("0.9"))) >= 0) {
+                // 当支出达到预算的90%时给出警告
+                System.out.println("\n⚠️ 注意：本月'" + category + "'类别的支出已接近预算！");
+                System.out.println("   预算: " + budgetAmount);
+                System.out.println("   已支出: " + currentExpense);
+                System.out.println("   本次支出后总额: " + newTotalExpense);
+                System.out.println("   剩余预算: " + budgetAmount.subtract(newTotalExpense));
+            }
         }
     }
 
@@ -411,6 +477,7 @@ public class Main {
         System.out.println("2. 查看预算");
         System.out.println("3. 修改预算");
         System.out.println("4. 删除预算");
+        System.out.println("5. 预算执行情况"); // 新增功能
         System.out.print("请选择操作: ");
 
         int choice = scanner.nextInt();
@@ -429,8 +496,129 @@ public class Main {
             case 4:
                 deleteBudget();
                 break;
+            case 5: // 新增：预算执行情况
+                viewBudgetExecution();
+                break;
             default:
                 System.out.println("无效的选择！");
+        }
+    }
+
+    // 查看预算执行情况
+    private static void viewBudgetExecution() {
+        System.out.println("\n=== 预算执行情况 ===");
+
+        String monthYear = InputUtil.getMonthYear("请输入要查看的月份: ");
+
+        // 获取该月所有预算
+        List<Budget> budgets = budgetService.getBudgetsByUserIdAndMonth(currentUser.getUserId(), monthYear);
+
+        if (budgets.isEmpty()) {
+            System.out.println("没有找到预算记录！");
+            return;
+        }
+
+        System.out.println("\n=== 预算执行情况 (" + monthYear + ") ===");
+        System.out.println("=".repeat(70));
+        System.out.printf("%-15s %-15s %-15s %-15s %-10s%n",
+                "类别", "预算金额", "已支出", "剩余预算", "执行率");
+        System.out.println("=".repeat(70));
+
+        for (Budget budget : budgets) {
+            String category = budget.getCategory();
+            BigDecimal budgetAmount = budget.getAmount();
+
+            // 获取该类别已支出总额
+            BigDecimal currentExpense = expenseService.getMonthlyExpenseByCategory(
+                    currentUser.getUserId(), category, monthYear);
+
+            // 计算剩余预算
+            BigDecimal remaining = budgetAmount.subtract(currentExpense);
+
+            // 计算执行率（已支出/预算）
+            double executionRate = 0;
+            if (budgetAmount.compareTo(BigDecimal.ZERO) > 0) {
+                executionRate = currentExpense.divide(budgetAmount, 4, java.math.RoundingMode.HALF_UP).doubleValue() * 100;
+            }
+
+            // 设置颜色标记
+            String colorCode = "";
+            String resetCode = "";
+
+            if (remaining.compareTo(BigDecimal.ZERO) < 0) {
+                colorCode = "\u001B[31m"; // 红色（超出预算）
+            } else if (executionRate >= 90) {
+                colorCode = "\u001B[33m"; // 黄色（接近预算）
+            }
+
+            System.out.printf("%-15s %-15s %-15s %-15s %s%-9.2f%%%s%n",
+                    category,
+                    budgetAmount,
+                    currentExpense,
+                    remaining,
+                    colorCode,
+                    executionRate,
+                    resetCode);
+        }
+        System.out.println("=".repeat(70));
+
+        // 显示预算执行情况分析
+        showBudgetExecutionAnalysis(budgets, monthYear);
+    }
+
+    // 预算执行情况分析
+    private static void showBudgetExecutionAnalysis(List<Budget> budgets, String monthYear) {
+        System.out.println("\n=== 预算执行分析 ===");
+
+        int overBudgetCount = 0;
+        int nearBudgetCount = 0;
+        BigDecimal totalBudget = BigDecimal.ZERO;
+        BigDecimal totalExpense = BigDecimal.ZERO;
+
+        for (Budget budget : budgets) {
+            String category = budget.getCategory();
+            BigDecimal budgetAmount = budget.getAmount();
+            BigDecimal currentExpense = expenseService.getMonthlyExpenseByCategory(
+                    currentUser.getUserId(), category, monthYear);
+
+            totalBudget = totalBudget.add(budgetAmount);
+            totalExpense = totalExpense.add(currentExpense);
+
+            double executionRate = 0;
+            if (budgetAmount.compareTo(BigDecimal.ZERO) > 0) {
+                executionRate = currentExpense.divide(budgetAmount, 4, java.math.RoundingMode.HALF_UP).doubleValue() * 100;
+            }
+
+            if (executionRate > 100) {
+                overBudgetCount++;
+            } else if (executionRate >= 90) {
+                nearBudgetCount++;
+            }
+        }
+
+        // 计算总体执行率
+        BigDecimal overallRate = BigDecimal.ZERO;
+        if (totalBudget.compareTo(BigDecimal.ZERO) > 0) {
+            overallRate = totalExpense.divide(totalBudget, 4, java.math.RoundingMode.HALF_UP).multiply(new BigDecimal("100"));
+        }
+
+        System.out.println("总预算: " + totalBudget);
+        System.out.println("总支出: " + totalExpense);
+        System.out.printf("总体执行率: %.2f%%\n", overallRate);
+
+        if (overBudgetCount > 0) {
+            System.out.println("⚠️ 警告: " + overBudgetCount + " 个类别已超出预算");
+        }
+
+        if (nearBudgetCount > 0) {
+            System.out.println("📝 注意: " + nearBudgetCount + " 个类别接近预算上限");
+        }
+
+        // 给出建议
+        if (overallRate.doubleValue() > 90) {
+            System.out.println("\n💡 建议: 总体支出已接近预算上限，建议控制后续支出");
+        } else if (overallRate.doubleValue() <= 50) {
+            System.out.println("\n✅ 良好: 预算控制良好，仍有较多预算空间");
         }
     }
 
@@ -438,10 +626,10 @@ public class Main {
     private static void addBudget() {
         System.out.println("\n=== 添加预算 ===");
 
-        String category = InputUtil.getString("请输入预算类别: ");
+        String category = InputUtil.getString("请输入预算类别: ", 50);
         BigDecimal amount = InputUtil.getValidAmount("请输入预算金额(整数最多8位，小数最多2位): ", 8, 2);
 
-        // 使用增强的月份验证
+        // 使用增强的月份验证（保持不变，预算可以是未来的月份）
         String monthYear = InputUtil.getMonthYear("请输入预算月份: ");
 
         Budget budget = new Budget(currentUser.getUserId(), category, amount, monthYear);
@@ -615,7 +803,9 @@ public class Main {
             for (Object[] row : categoryExpenses) {
                 String category = (String) row[0];
                 BigDecimal amount = (BigDecimal) row[1];
-                double percentage = amount.divide(total, 4, BigDecimal.ROUND_HALF_UP).doubleValue() * 100;
+
+                // 修复：使用新的 RoundingMode 替换已过时的 BigDecimal.ROUND_HALF_UP
+                double percentage = amount.divide(total, 4, RoundingMode.HALF_UP).doubleValue() * 100;
 
                 System.out.printf("类别: %s, 比例: %.2f%%\n", category, percentage);
             }

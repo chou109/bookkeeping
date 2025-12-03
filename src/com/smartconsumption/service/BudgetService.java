@@ -2,6 +2,7 @@ package com.smartconsumption.service;
 
 import com.smartconsumption.dao.BudgetDAO;
 import com.smartconsumption.entity.Budget;
+import java.math.BigDecimal;
 import java.util.List;
 
 public class BudgetService {
@@ -36,5 +37,18 @@ public class BudgetService {
     // 检查预算是否存在
     public boolean budgetExists(int userId, String category, String monthYear) {
         return budgetDAO.budgetExists(userId, category, monthYear);
+    }
+
+    // 新增：获取用户某月某类别的预算
+    public BigDecimal getBudgetByCategory(int userId, String category, String monthYear) {
+        List<Budget> budgets = budgetDAO.getBudgetsByUserIdAndMonth(userId, monthYear);
+
+        for (Budget budget : budgets) {
+            if (budget.getCategory().equals(category)) {
+                return budget.getAmount();
+            }
+        }
+
+        return null; // 如果没有设置该类别预算
     }
 }

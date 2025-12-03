@@ -156,4 +156,31 @@ public class ExpenseDAO {
             return false;
         }
     }
+
+
+    // 新增：获取用户某月某类别的支出总额
+    public BigDecimal getMonthlyExpenseByCategory(int userId, String category, String monthYear) {
+        String sql = "SELECT SUM(amount) as total FROM expense WHERE user_id = ? AND category = ? AND DATE_FORMAT(expense_date, '%Y-%m') = ?";
+        BigDecimal total = BigDecimal.ZERO;
+
+        try (Connection conn = DatabaseConnection.getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+
+            pstmt.setInt(1, userId);
+            pstmt.setString(2, category);
+            pstmt.setString(3, monthYear);
+            ResultSet rs = pstmt.executeQuery();
+
+            if (rs.next()) {
+                total = rs.getBigDecimal("total");
+                if (total == null) {
+                    total = BigDecimal.ZERO;
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return total;
+    }
 }

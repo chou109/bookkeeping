@@ -4,9 +4,13 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="226e864f-4f88-454d-ac8c-3acbe76d8461" name="更改" comment="11.26代码重构完成">
+    <list default="true" id="226e864f-4f88-454d-ac8c-3acbe76d8461" name="更改" comment="12.2修复了日期可错误输入的bug，修复了金额输入过大时数据溢出的bug">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/Main.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/Main.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/com/smartconsumption/dao/ExpenseDAO.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/com/smartconsumption/dao/ExpenseDAO.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/com/smartconsumption/service/BudgetService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/com/smartconsumption/service/BudgetService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/com/smartconsumption/service/ExpenseService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/com/smartconsumption/service/ExpenseService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/com/smartconsumption/util/DatabaseConnection.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/com/smartconsumption/util/DatabaseConnection.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/com/smartconsumption/util/InputUtil.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/com/smartconsumption/util/InputUtil.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -66,7 +70,8 @@
       <workItem from="1764125577405" duration="32000" />
       <workItem from="1764125616180" duration="2419000" />
       <workItem from="1764641567532" duration="55000" />
-      <workItem from="1764663680385" duration="4352000" />
+      <workItem from="1764663680385" duration="5406000" />
+      <workItem from="1764726888425" duration="5500000" />
     </task>
     <task id="LOCAL-00001" summary="11.26代码功能重构">
       <created>1764123442634</created>
@@ -82,7 +87,14 @@
       <option name="project" value="LOCAL" />
       <updated>1764127783477</updated>
     </task>
-    <option name="localTasksCounter" value="3" />
+    <task id="LOCAL-00003" summary="12.2修复了日期可错误输入的bug，修复了金额输入过大时数据溢出的bug">
+      <created>1764668331996</created>
+      <option name="number" value="00003" />
+      <option name="presentableId" value="LOCAL-00003" />
+      <option name="project" value="LOCAL" />
+      <updated>1764668331996</updated>
+    </task>
+    <option name="localTasksCounter" value="4" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -91,6 +103,7 @@
   <component name="VcsManagerConfiguration">
     <MESSAGE value="11.26代码功能重构" />
     <MESSAGE value="11.26代码重构完成" />
-    <option name="LAST_COMMIT_MESSAGE" value="11.26代码重构完成" />
+    <MESSAGE value="12.2修复了日期可错误输入的bug，修复了金额输入过大时数据溢出的bug" />
+    <option name="LAST_COMMIT_MESSAGE" value="12.2修复了日期可错误输入的bug，修复了金额输入过大时数据溢出的bug" />
   </component>
 </project>
