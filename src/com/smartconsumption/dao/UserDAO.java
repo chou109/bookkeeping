@@ -9,9 +9,9 @@ import java.util.List;
 
 public class UserDAO {
 
-    // 添加用户
+    // 添加用户（普通用户）
     public boolean addUser(User user) {
-        String sql = "INSERT INTO users (username, password, name, student_id, gender, age, phone, email) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+        String sql = "INSERT INTO users (username, password, name, student_id, gender, age, phone, email, role) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
         try (Connection conn = DatabaseConnection.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
@@ -24,6 +24,25 @@ public class UserDAO {
             pstmt.setInt(6, user.getAge());
             pstmt.setString(7, user.getPhone());
             pstmt.setString(8, user.getEmail());
+            pstmt.setString(9, user.getRole() != null ? user.getRole() : "user");
+
+            return pstmt.executeUpdate() > 0;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+    // 添加管理员用户
+    public boolean addAdmin(User admin) {
+        String sql = "INSERT INTO users (username, password, name, role) VALUES (?, ?, ?, 'admin')";
+
+        try (Connection conn = DatabaseConnection.getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+
+            pstmt.setString(1, admin.getUsername());
+            pstmt.setString(2, admin.getPassword());
+            pstmt.setString(3, admin.getName());
 
             return pstmt.executeUpdate() > 0;
         } catch (SQLException e) {
@@ -54,6 +73,7 @@ public class UserDAO {
                 user.setAge(rs.getInt("age"));
                 user.setPhone(rs.getString("phone"));
                 user.setEmail(rs.getString("email"));
+                user.setRole(rs.getString("role")); // 新增
                 user.setCreatedDate(rs.getTimestamp("created_date").toLocalDateTime());
             }
         } catch (SQLException e) {
@@ -66,7 +86,7 @@ public class UserDAO {
     // 获取所有用户
     public List<User> getAllUsers() {
         List<User> users = new ArrayList<>();
-        String sql = "SELECT * FROM users";
+        String sql = "SELECT * FROM users ORDER BY role DESC, user_id ASC";
 
         try (Connection conn = DatabaseConnection.getConnection();
              Statement stmt = conn.createStatement();
@@ -83,6 +103,39 @@ public class UserDAO {
                 user.setAge(rs.getInt("age"));
                 user.setPhone(rs.getString("phone"));
                 user.setEmail(rs.getString("email"));
+                user.setRole(rs.getString("role")); // 新增
+                user.setCreatedDate(rs.getTimestamp("created_date").toLocalDateTime());
+
+                users.add(user);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return users;
+    }
+
+    // 获取所有普通用户
+    public List<User> getAllRegularUsers() {
+        List<User> users = new ArrayList<>();
+        String sql = "SELECT * FROM users WHERE role = 'user' ORDER BY user_id ASC";
+
+        try (Connection conn = DatabaseConnection.getConnection();
+             Statement stmt = conn.createStatement();
+             ResultSet rs = stmt.executeQuery(sql)) {
+
+            while (rs.next()) {
+                User user = new User();
+                user.setUserId(rs.getInt("user_id"));
+                user.setUsername(rs.getString("username"));
+                user.setPassword(rs.getString("password"));
+                user.setName(rs.getString("name"));
+                user.setStudentId(rs.getString("student_id"));
+                user.setGender(rs.getString("gender"));
+                user.setAge(rs.getInt("age"));
+                user.setPhone(rs.getString("phone"));
+                user.setEmail(rs.getString("email"));
+                user.setRole(rs.getString("role"));
                 user.setCreatedDate(rs.getTimestamp("created_date").toLocalDateTime());
 
                 users.add(user);
@@ -96,7 +149,7 @@ public class UserDAO {
 
     // 更新用户信息
     public boolean updateUser(User user) {
-        String sql = "UPDATE users SET name = ?, student_id = ?, gender = ?, age = ?, phone = ?, email = ? WHERE user_id = ?";
+        String sql = "UPDATE users SET name = ?, student_id = ?, gender = ?, age = ?, phone = ?, email = ?, role = ? WHERE user_id = ?";
 
         try (Connection conn = DatabaseConnection.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
@@ -107,7 +160,8 @@ public class UserDAO {
             pstmt.setInt(4, user.getAge());
             pstmt.setString(5, user.getPhone());
             pstmt.setString(6, user.getEmail());
-            pstmt.setInt(7, user.getUserId());
+            pstmt.setString(7, user.getRole());
+            pstmt.setInt(8, user.getUserId());
 
             return pstmt.executeUpdate() > 0;
         } catch (SQLException e) {
@@ -154,6 +208,7 @@ public class UserDAO {
                 user.setAge(rs.getInt("age"));
                 user.setPhone(rs.getString("phone"));
                 user.setEmail(rs.getString("email"));
+                user.setRole(rs.getString("role")); // 新增
                 user.setCreatedDate(rs.getTimestamp("created_date").toLocalDateTime());
             }
         } catch (SQLException e) {

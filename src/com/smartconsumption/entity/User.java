@@ -12,6 +12,7 @@ public class User {
     private int age;
     private String phone;
     private String email;
+    private String role; // 新增角色字段：admin 或 user
     private LocalDateTime createdDate;
 
     // 构造方法
@@ -27,6 +28,21 @@ public class User {
         this.age = age;
         this.phone = phone;
         this.email = email;
+        this.role = "user"; // 默认角色为普通用户
+    }
+
+    // 新增：管理员构造方法
+    public User(String username, String password, String name, String studentId,
+                String gender, int age, String phone, String email, String role) {
+        this.username = username;
+        this.password = password;
+        this.name = name;
+        this.studentId = studentId;
+        this.gender = gender;
+        this.age = age;
+        this.phone = phone;
+        this.email = email;
+        this.role = role;
     }
 
     // Getter和Setter方法
@@ -57,6 +73,9 @@ public class User {
     public String getEmail() { return email; }
     public void setEmail(String email) { this.email = email; }
 
+    public String getRole() { return role; } // 新增
+    public void setRole(String role) { this.role = role; } // 新增
+
     public LocalDateTime getCreatedDate() { return createdDate; }
     public void setCreatedDate(LocalDateTime createdDate) { this.createdDate = createdDate; }
 
@@ -64,11 +83,23 @@ public class User {
     public String toString() {
         return "用户ID: " + userId +
                 "\n用户名: " + username +
+                "\n角色: " + role +
                 "\n姓名: " + name +
                 "\n学号: " + studentId +
                 "\n性别: " + gender +
                 "\n年龄: " + age +
                 "\n电话: " + phone +
-                "\n邮箱: " + email;
+                "\n邮箱: " + email +
+                "\n注册时间: " + createdDate;
+    }
+
+    // 新增：判断是否为管理员
+    public boolean isAdmin() {
+        return "admin".equals(role);
+    }
+
+    // 新增：判断是否为普通用户
+    public boolean isUser() {
+        return "user".equals(role);
     }
 }
