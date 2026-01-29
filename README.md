@@ -88,7 +88,9 @@ com.smartconsumption/
 项目已开源，欢迎提交 Issue 或 Pull Request。
 
 **仓库地址**：[https://gitee.com/chill109/bookkeeping.git](https://gitee.com/chill109/bookkeeping.git)
+或[https://github.com/chou109/bookkeeping.git](https://github.com/chou109/bookkeeping.git)
 
 ## 📄 许可证
+
 
 本项目遵循 MIT 许可证。详见 [LICENSE](LICENSE) 文件。
