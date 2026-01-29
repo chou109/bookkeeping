@@ -78,11 +78,6 @@ com.smartconsumption/
 - **技术升级**：迁移至 Spring Boot 开发 Web 版本，支持移动端与云端部署。
 - **性能优化**：引入缓存机制、数据库读写分离、异步处理等。
 
-## 📚 项目文档
-
-- [详细设计报告](https://gitee.com/chill109/bookkeeping/blob/main/docs/设计报告.md) - 包含完整的需求分析、架构设计、数据库说明及实现细节。
-- 用户手册与管理员指南（见 `docs/` 目录）。
-
 ## 🙌 贡献与支持
 
 项目已开源，欢迎提交 Issue 或 Pull Request。
